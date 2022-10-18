@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: aquamarine;
+}
+
+button {
+  padding: 1rem;
+  margin: 1rem;
+}
+
+.indicatorDot {
+  width: 30px;
+  height: 30px;
+  background-color: #ffab56;
+  border-radius: 50%;
+  position: fixed;
+}
