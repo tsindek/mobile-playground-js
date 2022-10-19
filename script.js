@@ -4,7 +4,7 @@ let vx = 0.0; // Velocity x and y
 let vy = 0.0;
 const updateRate = 1 / 60; // Sensor refresh rate
 
-function getAccel() {
+function getAccelerationPermission() {
   DeviceMotionEvent.requestPermission().then((response) => {
     if (response == "granted") {
       // Add a listener to get smartphone orientation
