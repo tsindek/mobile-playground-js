@@ -1,7 +1,6 @@
 const accelPermsButton = document.querySelector("#accelPermsButton");
 accelPermsButton.addEventListener("click", getAccelerationPermission);
 let latestEvent = null;
-let latestZEvent = null;
 let events = [];
 const accDisplay = document.querySelector(".displayAcc");
 
@@ -33,19 +32,16 @@ touchField.addEventListener("touchstart", touchStart);
 touchField.addEventListener("touchend", touchEnd);
 
 let touchIntervall = null;
-let counterIntervall = null;
 
 function touchStart() {
   if (touchIntervall === null && counterIntervall === null) {
     touchIntervall = setInterval(whileTouchActive, 50);
-    //counterIntervall = setInterval(countSquats, 100);
   }
 }
 
 function touchEnd() {
   if (touchIntervall !== null) {
     clearInterval(touchIntervall);
-    clearInterval(counterIntervall);
     touchIntervall = null;
     console.table(events);
   }
@@ -102,44 +98,3 @@ function isSquat(value) {
   }
   accDisplay.textContent = squatCounter;
 }
-
-// function countSquats() {
-//   for (let event of events) {
-//     if (event < 1) {
-//       phaseOne = true;
-//       //   console.log("phase one" + event);
-//     }
-//     if (phaseOne === true && event > 2) {
-//       phaseTwo = true;
-//       //   console.log("phase two" + event);
-//     }
-//     if (phaseOne === true && phaseTwo === true && event < 0) {
-//       phaseThree = true;
-//       //   console.log("phase three" + event);
-//     }
-//     if (
-//       phaseOne === true &&
-//       phaseTwo === true &&
-//       phaseThree === true &&
-//       event > 2
-//     ) {
-//       phaseFour = true;
-//       console.log("phase four" + event);
-//     }
-//     if (
-//       phaseOne === true &&
-//       phaseTwo === true &&
-//       phaseThree === true &&
-//       phaseFour === true
-//     ) {
-//       //events = [];
-//       phaseOne = false;
-//       phaseTwo = false;
-//       phaseThree = false;
-//       phaseFour = false;
-//       squatCounter++;
-//       return;
-//     }
-//     accDisplay.textContent = squatCounter;
-//   }
-// }
