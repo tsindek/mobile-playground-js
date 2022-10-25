@@ -1,41 +1,100 @@
-let px = 50; // Position x and y
-let py = 50;
-let vx = 0.0; // Velocity x and y
-let vy = 0.0;
-const updateRate = 1 / 60; // Sensor refresh rate
+const accelPermsButton = document.querySelector("#accelPermsButton");
+accelPermsButton.addEventListener("click", getAccelerationPermission);
+let latestEvent = null;
+let events = [];
+const accDisplay = document.querySelector(".displayAcc");
 
 function getAccelerationPermission() {
-  DeviceMotionEvent.requestPermission().then((response) => {
-    if (response == "granted") {
-      // Add a listener to get smartphone orientation
-      // in the alpha-beta-gamma axes (units in degrees)
-      window.addEventListener("deviceorientation", (event) => {
-        // Expose each orientation angle in a more readable way
-        rotation_degrees = event.alpha;
-        frontToBack_degrees = event.beta;
-        leftToRight_degrees = event.gamma;
-
-        // Update velocity according to how tilted the phone is
-        // Since phones are narrower than they are long, double the increase to the x velocity
-        vx = vx + leftToRight_degrees * updateRate * 2;
-        vy = vy + frontToBack_degrees * updateRate;
-
-        // Update position and clip it to bounds
-        px = px + vx * 0.5;
-        if (px > 98 || px < 0) {
-          px = Math.max(0, Math.min(98, px)); // Clip px between 0-98
-          vx = 0;
+  if (typeof DeviceMotionEvent.requestPermission === "function") {
+    // Handle iOS 13+ devices.
+    DeviceMotionEvent.requestPermission()
+      .then((state) => {
+        if (state === "granted") {
+          window.addEventListener("devicemotion", handleOrientation);
+        } else {
+          console.error("Request to access the orientation was rejected");
         }
+      })
+      .catch(console.error);
+  } else {
+    // Handle regular non iOS 13+ devices.
+    window.addEventListener("devicemotion", handleOrientation);
+  }
+}
 
-        py = py + vy * 0.5;
-        if (py > 98 || py < 0) {
-          py = Math.max(0, Math.min(98, py)); // Clip py between 0-98
-          vy = 0;
-        }
+function handleOrientation(event) {
+  const y = event.acceleration.y;
+  latestEvent = y;
+}
 
-        dot = document.getElementsByClassName("indicatorDot")[0];
-        dot.setAttribute("style", "left:" + px + "%;" + "top:" + py + "%;");
-      });
-    }
-  });
+const touchField = document.querySelector(".touchField");
+touchField.addEventListener("touchstart", touchStart);
+touchField.addEventListener("touchend", touchEnd);
+
+let touchIntervall = null;
+
+function touchStart() {
+  if (touchIntervall === null && counterIntervall === null) {
+    touchIntervall = setInterval(whileTouchActive, 50);
+  }
+}
+
+function touchEnd() {
+  if (touchIntervall !== null) {
+    clearInterval(touchIntervall);
+    touchIntervall = null;
+    console.table(events);
+  }
+}
+
+let squatCounter = 0;
+
+accDisplay.textContent = squatCounter;
+
+function whileTouchActive() {
+  events.push(latestEvent.toFixed(2));
+  isSquat(latestEvent);
+}
+
+let phaseOne = false;
+let phaseTwo = false;
+let phaseThree = false;
+let phaseFour = false;
+
+function isSquat(value) {
+  if (value < 1) {
+    phaseOne = true;
+    //   console.log("phase one" + value);
+  }
+  if (phaseOne === true && value > 2) {
+    phaseTwo = true;
+    //   console.log("phase two" + value);
+  }
+  if (phaseOne === true && phaseTwo === true && value < 0) {
+    phaseThree = true;
+    //   console.log("phase three" + value);
+  }
+  if (
+    phaseOne === true &&
+    phaseTwo === true &&
+    phaseThree === true &&
+    value > 2
+  ) {
+    phaseFour = true;
+    console.log("phase four" + value);
+  }
+  if (
+    phaseOne === true &&
+    phaseTwo === true &&
+    phaseThree === true &&
+    phaseFour === true
+  ) {
+    //events = [];
+    phaseOne = false;
+    phaseTwo = false;
+    phaseThree = false;
+    phaseFour = false;
+    squatCounter++;
+  }
+  accDisplay.textContent = squatCounter;
 }
