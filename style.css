@@ -20,3 +20,17 @@ button {
   border-radius: 50%;
   position: fixed;
 }
+
+.touchField {
+  background-color: hotpink;
+  width: 100vw;
+  height: 70vw;
+}
+
+.displayAcc {
+  background-color: #ffab56;
+  width: 100vw;
+  height: 20vw;
+  text-align: center;
+  font-size: 1.5rem;
+}
